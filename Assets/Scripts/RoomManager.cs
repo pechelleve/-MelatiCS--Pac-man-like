@@ -21,5 +21,9 @@ public class RoomManager : MonoBehaviour
             // Place room at slot
             _roomList[i].transform.position = roomPositions[randomIndex].position;
         }
+
+        //Remove slot from available slot
+
+        //Shuffle each different room into different slot
     }
 }
