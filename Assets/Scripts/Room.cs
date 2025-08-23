@@ -6,4 +6,6 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
     public string roomName;
+
+    public int roomIndex;
 }
