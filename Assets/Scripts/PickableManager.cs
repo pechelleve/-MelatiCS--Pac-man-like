@@ -5,6 +5,7 @@ using UnityEngine;
 public class PickableManager : MonoBehaviour
 {
     private List<Pickable> _pickableList = new List<Pickable>();
+    [SerializeField] private Player _player;
     private void Start()
     {
         InitPickableList();
@@ -27,6 +28,10 @@ public class PickableManager : MonoBehaviour
         if (_pickableList.Count <= 0)
         {
             Debug.Log("Win");
+        }
+        if (pickable._pickableType == PickableType.PowerUp)
+        {
+            _player?.PickPowerUp();
         }
     }
 }

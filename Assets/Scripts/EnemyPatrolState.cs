@@ -10,22 +10,24 @@ public class EnemyPatrolState : BaseState
     public void EnterState(Enemy enemy)
     {
         _isMoving = false;
-        Debug.Log("Start Patrol");
     }
 
     public void UpdateState(Enemy enemy)
     {
+        if (Vector3.Distance(enemy.transform.position, enemy.Player.transform.position) < enemy.ChaseDistance)
+        {
+            enemy.SwitchState(enemy.ChaseState);
+        }
         if (!_isMoving)
         {
             _isMoving = true;
             int index = UnityEngine.Random.Range(0, enemy._waypoints.Count);
             _destination = enemy._waypoints[index].transform.position;
             enemy.NavMeshAgent.destination = _destination;
-            Debug.Log("Patrolling");
         }
         else
         { 
-        if (Vector3.Distance(_destination, enemy.transform.position) <= 0.1)
+        if (!enemy.NavMeshAgent.pathPending && enemy.NavMeshAgent.remainingDistance <= enemy.NavMeshAgent.stoppingDistance)
            { 
              _isMoving = false;
            }

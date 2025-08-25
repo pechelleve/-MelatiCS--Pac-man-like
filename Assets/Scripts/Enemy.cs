@@ -10,7 +10,9 @@ public class Enemy : MonoBehaviour
     public EnemyChaseState ChaseState = new EnemyChaseState();
     public EnemyRetreatState RetreatState = new EnemyRetreatState();
 
-    [SerializeField] public List<Waypoints> _waypoints = new List<Waypoints>();
+    [SerializeField] public List<Transform> _waypoints = new List<Transform>();
+    [SerializeField] public float ChaseDistance;
+    [SerializeField] public Player Player;
 
     [HideInInspector] public NavMeshAgent NavMeshAgent;
 
@@ -26,6 +28,32 @@ public class Enemy : MonoBehaviour
         if(_currentState != null)
         {
             _currentState.UpdateState(this);
+        }
+    }
+
+    public void SwitchState(BaseState state)
+    { 
+        _currentState.ExitState(this);
+        _currentState = state;
+        _currentState.EnterState(this);
+    }
+
+    private void StartRetreating()
+    {
+        SwitchState(RetreatState);
+    }
+
+    private void StopRetreating()
+    { 
+        SwitchState(PatrolState);
+    }
+
+    private void Start()
+    {
+        if (Player != null)
+        {
+            Player.OnPowerUpStart += StartRetreating;
+            Player.OnPowerUpStop += StopRetreating;
         }
     }
 }
