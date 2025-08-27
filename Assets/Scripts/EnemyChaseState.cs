@@ -7,6 +7,7 @@ public class EnemyChaseState : BaseState
     
     public void EnterState(Enemy enemy)
     {
+        enemy.Animator.SetTrigger("ChaseState");
         Debug.Log("Start Chasing");
     }
 

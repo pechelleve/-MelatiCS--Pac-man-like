@@ -5,12 +5,12 @@ using UnityEngine;
 public class ThirdPersonCamera : MonoBehaviour
 {
     [Header("References")]
-    public Transform orientation;
-    public Transform player;
-    public Transform playerObj;
-    public Rigidbody rb;
+    [SerializeField] private Transform _orientation;
+    [SerializeField] private Transform _player;
+    [SerializeField] private Transform _playerObj;
+    [SerializeField] private Rigidbody _rigidBody;
 
-    public float rotationSpeed;
+    [SerializeField] private float _rotationSpeed;
 
     private void Start()
     {
@@ -18,21 +18,20 @@ public class ThirdPersonCamera : MonoBehaviour
         Cursor.visible = false;
     }
 
-
     private void Update()
     {
         //Rotate orientation
-        Vector3 viewDir = player.position - new Vector3(transform.position.x, player.position.y, transform.position.z);
-        orientation.forward = viewDir.normalized;
+        Vector3 viewDir = _player.position - new Vector3(transform.position.x, _player.position.y, transform.position.z);
+        _orientation.forward = viewDir.normalized;
 
         //Rotate player object
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        Vector3 inputDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        Vector3 inputDir = _orientation.forward * verticalInput + _orientation.right * horizontalInput;
 
         if (inputDir != Vector3.zero)
         {
-            playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+            _playerObj.forward = Vector3.Slerp(_playerObj.forward, inputDir.normalized, Time.deltaTime * _rotationSpeed);
         }
     }
 }

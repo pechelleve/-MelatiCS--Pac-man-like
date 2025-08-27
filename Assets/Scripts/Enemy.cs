@@ -15,12 +15,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] public Player Player;
 
     [HideInInspector] public NavMeshAgent NavMeshAgent;
+    public Animator Animator;
 
     private void Awake()
     {
         _currentState = PatrolState;
         _currentState.EnterState(this);
         NavMeshAgent = GetComponent<NavMeshAgent>();
+        Animator = GetComponent<Animator>();
     }
 
     private void Update()

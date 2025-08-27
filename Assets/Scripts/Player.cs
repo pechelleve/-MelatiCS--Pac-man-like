@@ -10,9 +10,11 @@ public class Player : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private Transform _orientation;
     [SerializeField] private float _speed;
+    Vector3 moveDirection;
 
-    public float groundDrag;
+    [SerializeField] private float _groundDrag;
 
+    [Header("Jump")]
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _jumpCooldown;
     [SerializeField] private float airMultiplier;
@@ -28,7 +30,6 @@ public class Player : MonoBehaviour
 
 
     private Rigidbody _rigidBody;
-    [SerializeField] private float _rotateSpeed;
     [SerializeField] private Transform _camera;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private LayerMask groundLayer;
@@ -38,7 +39,6 @@ public class Player : MonoBehaviour
     private float verticalInput;
     private Coroutine _powerupCoroutine;
 
-    Vector3 moveDirection;
 
     public Action OnPowerUpStart;
     public Action OnPowerUpStop;
@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
 
         //Handle drag
         if (isGrounded)
-            _rigidBody.drag = groundDrag;
+            _rigidBody.drag = _groundDrag;
         else
             _rigidBody.drag = 0;
     }
