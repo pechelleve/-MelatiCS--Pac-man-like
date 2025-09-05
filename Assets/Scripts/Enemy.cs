@@ -33,6 +33,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void Dead()
+    {
+        Destroy(gameObject);
+    }
+
     public void SwitchState(BaseState state)
     { 
         _currentState.ExitState(this);
@@ -58,4 +63,19 @@ public class Enemy : MonoBehaviour
             Player.OnPowerUpStop += StopRetreating;
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_currentState != RetreatState)
+        {
+            if (collision.gameObject.TryGetComponent(out Player player))
+            {
+                if (player._isPowerUpActive)
+                {
+                    player.Dead();
+                }
+            }
+        }
+    }
+
 }

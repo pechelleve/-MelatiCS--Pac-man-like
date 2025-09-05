@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -28,7 +30,6 @@ public class Player : MonoBehaviour
     public LayerMask Ground;
     private bool isGrounded;
 
-
     private Rigidbody _rigidBody;
     [SerializeField] private Transform _camera;
     [SerializeField] private float gravity = -9.81f;
@@ -39,15 +40,20 @@ public class Player : MonoBehaviour
     private float verticalInput;
     private Coroutine _powerupCoroutine;
 
-
     public Action OnPowerUpStart;
     public Action OnPowerUpStop;
-    
+    public bool _isPowerUpActive;
+
+    [SerializeField] private Transform _respawnPoint;
+    [SerializeField] private int _health;
+    [SerializeField] private TMP_Text _healthText;
+
     private void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
         _rigidBody.freezeRotation = true;
         readyToJump = true;
+        UpdateUI();
     }
 
     private void Update()
@@ -63,6 +69,28 @@ public class Player : MonoBehaviour
             _rigidBody.drag = _groundDrag;
         else
             _rigidBody.drag = 0;
+    }
+
+    private void UpdateUI()
+    {
+        _healthText.text = "Health:" + _health;
+    }
+
+    public void Dead()
+    {
+        _health -= 1;
+
+        if (_health > 0)
+        {
+            transform.position = _respawnPoint.position;
+        }
+        else
+        {
+            _health = 0;
+            SceneManager.LoadScene("LoseScreen");
+        }
+
+        UpdateUI();
     }
 
     private void MyInput()
@@ -92,7 +120,7 @@ public class Player : MonoBehaviour
         moveDirection = _orientation.forward * verticalInput + _orientation.right * horizontalInput;
 
         //On ground
-        if(isGrounded)
+        if (isGrounded)
             _rigidBody.AddForce(moveDirection.normalized * _speed * 10f, ForceMode.Force);
 
         //In air
@@ -109,7 +137,7 @@ public class Player : MonoBehaviour
         if (flatVelocity.magnitude > _speed)
         {
             Vector3 limitedVelocity = flatVelocity.normalized * _speed;
-            _rigidBody.velocity = new Vector3( limitedVelocity.x, _rigidBody.velocity.y, limitedVelocity.z);
+            _rigidBody.velocity = new Vector3(limitedVelocity.x, _rigidBody.velocity.y, limitedVelocity.z);
         }
     }
 
@@ -126,13 +154,16 @@ public class Player : MonoBehaviour
         readyToJump = true;
     }
 
-    private IEnumerator StartPowerUp() 
+    private IEnumerator StartPowerUp()
     {
+        _isPowerUpActive = true;
         if (OnPowerUpStart != null)
         {
             OnPowerUpStart();
         }
-            yield return new WaitForSeconds(_powerupDuration);
+        yield return new WaitForSeconds(_powerupDuration);
+        _isPowerUpActive = false;
+
         if (OnPowerUpStop != null)
         {
             OnPowerUpStop();
@@ -148,4 +179,21 @@ public class Player : MonoBehaviour
         _powerupCoroutine = StartCoroutine(StartPowerUp());
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // If player has no powerup, lose health
+            if (!_isPowerUpActive)
+            {
+                Dead();
+            }
+            else
+            {
+                // If powerup is active, kill the enemy
+                collision.gameObject.GetComponent<Enemy>().Dead();
+            }
+        }
+
+    }
 }
