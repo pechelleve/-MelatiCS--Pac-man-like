@@ -118,4 +118,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cbee765552ac7c449a51d68c7c30ff0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _coinSFX: {fileID: 8300000, guid: 5f4a29f6cf6b2934ab6a685ab81edd7f, type: 3}
   _pickableType: 0

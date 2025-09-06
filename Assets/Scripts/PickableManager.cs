@@ -8,11 +8,17 @@ public class PickableManager : MonoBehaviour
     private List<Pickable> _pickableList = new List<Pickable>();
     [SerializeField] private Player _player;
     [SerializeField] private ScoreManager _scoreManager;
+    [SerializeField] private AudioClip _powerActivatedSFX;
+    [SerializeField] private AudioClip _coinSFX;
+
+    private AudioSource _audioSource;
+
 
     private void Start()
     {
         InitPickableList();
     }
+
     private void InitPickableList()
     {
         Pickable[] pickableObjects = GameObject.FindObjectsOfType<Pickable>();
@@ -24,6 +30,7 @@ public class PickableManager : MonoBehaviour
         _scoreManager.SetMaxScore(_pickableList.Count);
         Debug.Log("Pickable List: "+_pickableList.Count);
     }
+
     private void OnPickablePicked(Pickable pickable)
     {
         _pickableList.Remove(pickable);
@@ -35,9 +42,14 @@ public class PickableManager : MonoBehaviour
         }
         if (pickable._pickableType == PickableType.PowerUp)
         {
+            AudioSource.PlayClipAtPoint(_powerActivatedSFX, Camera.main.transform.position);
             _player?.PickPowerUp();
         }
-        if (_scoreManager != null) 
+        else if (pickable._pickableType == PickableType.Coin) 
+        {
+            AudioSource.PlayClipAtPoint(_coinSFX, Camera.main.transform.position);
+        }
+        if (_scoreManager != null)
         {
             _scoreManager.AddScore(1);
         }

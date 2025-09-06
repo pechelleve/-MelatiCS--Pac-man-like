@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float _powerupDuration;
+    [SerializeField] private AudioClip _powerDeactivatedSFX;
+    private AudioSource _audioSource;
 
     private float horizontalInput;
     private float verticalInput;
@@ -53,6 +55,8 @@ public class Player : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
         _rigidBody.freezeRotation = true;
         readyToJump = true;
+
+        _audioSource = GetComponent<AudioSource>();
         UpdateUI();
     }
 
@@ -157,17 +161,17 @@ public class Player : MonoBehaviour
     private IEnumerator StartPowerUp()
     {
         _isPowerUpActive = true;
-        if (OnPowerUpStart != null)
-        {
-            OnPowerUpStart();
-        }
+
+        OnPowerUpStart?.Invoke();
+        Debug.Log("PowerUp Started");
+
         yield return new WaitForSeconds(_powerupDuration);
+
         _isPowerUpActive = false;
 
-        if (OnPowerUpStop != null)
-        {
-            OnPowerUpStop();
-        }
+        OnPowerUpStop?.Invoke();
+        _audioSource.PlayOneShot(_powerDeactivatedSFX);
+        Debug.Log("PowerUp Ended");
     }
 
     public void PickPowerUp()
