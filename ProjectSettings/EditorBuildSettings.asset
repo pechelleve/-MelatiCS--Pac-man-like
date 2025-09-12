@@ -6,15 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main Menu.unity
+    path: Assets/Final Project/Scenes/Main Menu.unity
     guid: f0fa28714fb086d4ea0808666a38d46a
   - enabled: 1
-    path: Assets/Scenes/Gameplay.unity
+    path: Assets/Final Project/Scenes/Gameplay.unity
     guid: 90abba9418ac41e46991262bcd9679ff
   - enabled: 1
-    path: Assets/Scenes/WinScreen.unity
+    path: Assets/Final Project/Scenes/WinScreen.unity
     guid: b8add72580a51de4d877a54f1758c42f
   - enabled: 1
-    path: Assets/Scenes/LoseScreen.unity
+    path: Assets/Final Project/Scenes/LoseScreen.unity
     guid: de155adb033dd2c4298bd421689866d9
   m_configObjects: {}

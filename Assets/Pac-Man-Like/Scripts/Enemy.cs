@@ -1,0 +1,81 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class Enemy : MonoBehaviour
+{
+    private BaseState _currentState;
+    public EnemyPatrolState PatrolState = new EnemyPatrolState();
+    public EnemyChaseState ChaseState = new EnemyChaseState();
+    public EnemyRetreatState RetreatState = new EnemyRetreatState();
+
+    [SerializeField] public List<Transform> _waypoints = new List<Transform>();
+    [SerializeField] public float ChaseDistance;
+    [SerializeField] public Player Player;
+
+    [HideInInspector] public NavMeshAgent NavMeshAgent;
+    public Animator Animator;
+
+    private void Awake()
+    {
+        _currentState = PatrolState;
+        _currentState.EnterState(this);
+        NavMeshAgent = GetComponent<NavMeshAgent>();
+        Animator = GetComponent<Animator>();
+    }
+
+    private void Update()
+    {
+        if(_currentState != null)
+        {
+            _currentState.UpdateState(this);
+        }
+    }
+
+    public void Dead()
+    {
+        Destroy(gameObject);
+    }
+
+    public void SwitchState(BaseState state)
+    { 
+        _currentState.ExitState(this);
+        _currentState = state;
+        _currentState.EnterState(this);
+    }
+
+    private void StartRetreating()
+    {
+        SwitchState(RetreatState);
+    }
+
+    private void StopRetreating()
+    { 
+        SwitchState(PatrolState);
+    }
+
+    private void Start()
+    {
+        if (Player != null)
+        {
+            Player.OnPowerUpStart += StartRetreating;
+            Player.OnPowerUpStop += StopRetreating;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_currentState != RetreatState)
+        {
+            if (collision.gameObject.TryGetComponent(out Player player))
+            {
+                if (player._isPowerUpActive)
+                {
+                    player.Dead();
+                }
+            }
+        }
+    }
+
+}
