@@ -12,7 +12,8 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] public List<Transform> _waypoints = new List<Transform>();
     [SerializeField] public float ChaseDistance;
-    [SerializeField] public Player Player;
+    [SerializeField] private PlayerPowerUpHandler _playerPowerUpHandler;
+    public Transform PlayerTransform { get; private set; }
 
     [HideInInspector] public NavMeshAgent NavMeshAgent;
     public Animator Animator;
@@ -23,6 +24,34 @@ public class Enemy : MonoBehaviour
         _currentState.EnterState(this);
         NavMeshAgent = GetComponent<NavMeshAgent>();
         Animator = GetComponent<Animator>();
+
+        if (_playerPowerUpHandler != null)
+        {
+            PlayerTransform = _playerPowerUpHandler.transform;
+        }
+    }
+
+    private void Start()
+    {
+        if (_playerPowerUpHandler != null)
+        {
+            _playerPowerUpHandler.OnPowerUpStart += StartRetreating;
+            _playerPowerUpHandler.OnPowerUpStop += StopRetreating;
+        }
+        else
+        {
+            Debug.LogError("PlayerPowerUpHandler not assigned on " + gameObject.name + "!", this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from events to prevent memory leaks and errors
+        if (_playerPowerUpHandler != null)
+        {
+            _playerPowerUpHandler.OnPowerUpStart -= StartRetreating;
+            _playerPowerUpHandler.OnPowerUpStop -= StopRetreating;
+        }
     }
 
     private void Update()
@@ -53,29 +82,6 @@ public class Enemy : MonoBehaviour
     private void StopRetreating()
     { 
         SwitchState(PatrolState);
-    }
-
-    private void Start()
-    {
-        if (Player != null)
-        {
-            Player.OnPowerUpStart += StartRetreating;
-            Player.OnPowerUpStop += StopRetreating;
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (_currentState != RetreatState)
-        {
-            if (collision.gameObject.TryGetComponent(out Player player))
-            {
-                if (player._isPowerUpActive)
-                {
-                    player.Dead();
-                }
-            }
-        }
     }
 
 }

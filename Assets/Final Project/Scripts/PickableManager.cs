@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class PickableManager : MonoBehaviour
 {
     private List<Pickable> _pickableList = new List<Pickable>();
-    [SerializeField] private Player _player;
+    [SerializeField] private PlayerPowerUpHandler _playerPowerUpHandler;
     [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private AudioClip _powerActivatedSFX;
     [SerializeField] private AudioClip _coinSFX;
@@ -43,7 +43,7 @@ public class PickableManager : MonoBehaviour
         if (pickable._pickableType == PickableType.PowerUp)
         {
             AudioSource.PlayClipAtPoint(_powerActivatedSFX, Camera.main.transform.position);
-            _player?.PickPowerUp();
+            _playerPowerUpHandler?.ActivatePowerUp();
         }
         else if (pickable._pickableType == PickableType.Coin) 
         {
