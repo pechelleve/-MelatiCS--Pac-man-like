@@ -6,6 +6,7 @@ using UnityEngine;
 public class Pickable : MonoBehaviour
 {
     public PickableType _pickableType;
+    public int value;
     public Action<Pickable> OnPicked;
 
     private void OnTriggerEnter(Collider other)

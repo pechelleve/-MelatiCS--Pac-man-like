@@ -1,5 +1,7 @@
 public enum PickableType
 {
     Coin,
-    PowerUp
+    PowerUp,
+    Food,
+    Weapon,
 }

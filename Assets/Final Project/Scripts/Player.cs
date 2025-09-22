@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask _groundLayer;
     private bool isGrounded;
 
+    [Header("Animation")]
+    [SerializeField] private Animator _animator;
+
     private float horizontalInput;
     private float verticalInput;
     private Vector3 moveDirection;
@@ -34,6 +37,11 @@ public class Player : MonoBehaviour
     {
         _rigidBody = GetComponent<Rigidbody>();
         _rigidBody.freezeRotation = true;
+
+        if (_animator == null) 
+        {
+            _animator = GetComponentInChildren<Animator>();
+        }
     }
 
     private void Update()
@@ -43,6 +51,17 @@ public class Player : MonoBehaviour
 
         HandleInput();
         SpeedControl();
+        UpdateAnimator();
+    }
+
+    private void UpdateAnimator()
+    {
+        if (_animator == null) return;
+
+        Vector3 horizontalVelocity = new Vector3(_rigidBody.velocity.x, 0, _rigidBody.velocity.z);
+        float currentSpeed = horizontalVelocity.magnitude;
+
+        _animator.SetFloat("Velocity", currentSpeed);
     }
 
     private void FixedUpdate()

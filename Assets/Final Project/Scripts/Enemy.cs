@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(EnemyHealth))]
 public class Enemy : MonoBehaviour
 {
     private BaseState _currentState;
@@ -38,20 +39,6 @@ public class Enemy : MonoBehaviour
             _playerPowerUpHandler.OnPowerUpStart += StartRetreating;
             _playerPowerUpHandler.OnPowerUpStop += StopRetreating;
         }
-        else
-        {
-            Debug.LogError("PlayerPowerUpHandler not assigned on " + gameObject.name + "!", this);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        // Unsubscribe from events to prevent memory leaks and errors
-        if (_playerPowerUpHandler != null)
-        {
-            _playerPowerUpHandler.OnPowerUpStart -= StartRetreating;
-            _playerPowerUpHandler.OnPowerUpStop -= StopRetreating;
-        }
     }
 
     private void Update()
@@ -60,11 +47,6 @@ public class Enemy : MonoBehaviour
         {
             _currentState.UpdateState(this);
         }
-    }
-
-    public void Dead()
-    {
-        Destroy(gameObject);
     }
 
     public void SwitchState(BaseState state)

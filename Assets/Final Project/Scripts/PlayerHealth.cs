@@ -43,6 +43,13 @@ public class PlayerHealth : MonoBehaviour
         UpdateUI();
     }
 
+    public void Heal(int healAmount)
+    {
+        _currentHealth += healAmount;
+        _currentHealth = Mathf.Min( _currentHealth, _maxHealth );
+        UpdateUI();
+    }
+
     private void Respawn()
     {
         // Teleport the player back to the respawn point

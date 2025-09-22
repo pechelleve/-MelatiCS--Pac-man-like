@@ -6,8 +6,10 @@ using UnityEngine.SceneManagement;
 public class PickableManager : MonoBehaviour
 {
     private List<Pickable> _pickableList = new List<Pickable>();
+    [SerializeField] private PlayerHealth _playerHealth;
     [SerializeField] private PlayerPowerUpHandler _playerPowerUpHandler;
     [SerializeField] private ScoreManager _scoreManager;
+
     [SerializeField] private AudioClip _powerActivatedSFX;
     [SerializeField] private AudioClip _coinSFX;
 
@@ -33,25 +35,32 @@ public class PickableManager : MonoBehaviour
 
     private void OnPickablePicked(Pickable pickable)
     {
+        if (!_pickableList.Contains(pickable)) return;
+
         _pickableList.Remove(pickable);
+
+        switch (pickable._pickableType)
+        {
+            case PickableType.PowerUp:
+                _playerPowerUpHandler?.ActivatePowerUp();
+                AudioSource.PlayClipAtPoint(_powerActivatedSFX, Camera.main.transform.position);
+                break;
+
+            case PickableType.Coin:
+                _scoreManager?.AddScore(pickable.value);
+                AudioSource.PlayClipAtPoint(_coinSFX, Camera.main.transform.position);
+                break;
+
+            case PickableType.Food:
+                _playerHealth?.Heal(pickable.value);
+                break;
+
+        }
         Destroy(pickable.gameObject);
-        Debug.Log("Pickable List: " + _pickableList.Count);
+
         if (_pickableList.Count <= 0)
         {
             SceneManager.LoadScene("WinScreen");
-        }
-        if (pickable._pickableType == PickableType.PowerUp)
-        {
-            AudioSource.PlayClipAtPoint(_powerActivatedSFX, Camera.main.transform.position);
-            _playerPowerUpHandler?.ActivatePowerUp();
-        }
-        else if (pickable._pickableType == PickableType.Coin) 
-        {
-            AudioSource.PlayClipAtPoint(_coinSFX, Camera.main.transform.position);
-        }
-        if (_scoreManager != null)
-        {
-            _scoreManager.AddScore(1);
         }
     }
 }
